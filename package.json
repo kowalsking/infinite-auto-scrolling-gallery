@@ -1,0 +1,23 @@
+{
+  "name": "infinite-auto-scrolling-gallery",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kowalsking/infinite-auto-scrolling-gallery.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kowalsking/infinite-auto-scrolling-gallery/issues"
+  },
+  "homepage": "https://github.com/kowalsking/infinite-auto-scrolling-gallery#readme",
+  "dependencies": {
+    "ogl": "0.0.94"
+  }
+}
