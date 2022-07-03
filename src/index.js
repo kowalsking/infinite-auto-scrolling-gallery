@@ -1,4 +1,4 @@
-import { Renderer, Camera, Transform } from '../../ogl-master'
+import { Renderer, Camera, Transform } from 'ogl'
 
 class App {
   constructor() {
@@ -11,10 +11,11 @@ class App {
     })
 
     this.gl = this.renderer.gl
+    console.log('Renderer')
     document.body.append(this.gl.canvas)
   }
 }
 
-// new App()
+new App()
 
 console.log('Working!')
