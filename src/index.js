@@ -1,4 +1,5 @@
 import { Renderer, Camera, Transform } from 'ogl'
+import './styles/index.css'
 
 class App {
   constructor() {
