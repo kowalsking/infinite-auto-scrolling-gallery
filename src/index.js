@@ -1,4 +1,4 @@
-import { Renderer, Camera, Transform } from 'ogl'
+import { Renderer, Camera, Transform, Plane } from 'ogl'
 import './styles/index.css'
 
 class App {
@@ -31,6 +31,10 @@ class App {
 
   createScene() {
     this.scene = new Transform()
+  }
+
+  createGeometry() {
+    this.planeGeometry = new Plane(this.gl)
   }
 
   /**
