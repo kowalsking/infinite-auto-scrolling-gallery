@@ -8,17 +8,44 @@ export default class {
     this.element = element
     this.image = this.element.querySelector('img')
 
-    console.log(this.image)
     this.geometry = geometry
     this.gl = gl
     this.scene = scene
     this.screen = screen
     this.viewport = viewport
 
-    // this.createMesh()
+    this.createMesh()
     // this.createBounds()
 
     // this.onResize()
+  }
+
+  createMesh() {
+    const image = new Image()
+    const texture = new Texture(this.gl)
+
+    image.src = this.image.src
+    image.onload = _ => {
+      texture.image = image
+    }
+
+    const program = new Program(this.gl, {
+      fragment,
+      vertex,
+      uniforms: {
+        tMap: { value: texture },
+        uScreenSizes: { value: [0, 0] },
+        uImageSize: { value: [0, 0] }
+      },
+      transparent: true
+    })
+
+    this.plane = new Mesh(this.gl, {
+      geometry: this.geometry,
+      program
+    })
+
+    this.plane.setParent(this.scene)
   }
 
   onResize() { }
