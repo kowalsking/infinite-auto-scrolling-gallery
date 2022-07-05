@@ -1,5 +1,6 @@
 import { Renderer, Camera, Transform, Plane } from 'ogl'
-import './styles/index.css'
+import '../styles/index.css'
+import Media from './media.js'
 
 class App {
   constructor() {
@@ -7,6 +8,7 @@ class App {
     this.createCamera()
     this.createScene()
 
+    this.createMedias()
     this.onResize()
 
     this.update()
@@ -37,7 +39,7 @@ class App {
     this.planeGeometry = new Plane(this.gl)
   }
 
-  createMedias () {
+  createMedias() {
     this.mediasElements = document.querySelectorAll('.demo-1__gallery__figure')
     this.medias = Array.from(this.mediasElements).map(element => {
       let media = new Media({
