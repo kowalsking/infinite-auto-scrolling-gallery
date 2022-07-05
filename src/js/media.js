@@ -15,9 +15,9 @@ export default class {
     this.viewport = viewport
 
     this.createMesh()
-    // this.createBounds()
+    this.createBounds()
 
-    // this.onResize()
+    this.onResize()
   }
 
   createMesh() {
@@ -48,7 +48,41 @@ export default class {
     this.plane.setParent(this.scene)
   }
 
-  onResize() { }
+  createBounds() {
+    this.bounds = this.element.getBoundingClientRect()
 
-  update() { }
+    this.updateScale()
+    this.updateX()
+    this.updateY()
+  }
+
+  updateScale() {
+    this.plane.scale.x = this.viewport.width * this.bounds.width / this.screen.width
+    this.plane.scale.y = this.viewport.height * this.bounds.height / this.screen.height
+  }
+
+  updateX(x = 0) {
+    this.plane.position.x = -(this.viewport.width / 2) + (this.plane.scale.x / 2) + ((this.bounds.left - x) / this.screen.width) * this.viewport.width
+  }
+
+  updateY(y = 0) {
+    this.plane.position.y = (this.viewport.height / 2) - (this.plane.scale.y / 2) - ((this.bounds.top - y) / this.screen.height) * this.viewport.height
+  }
+
+  onResize(sizes) {
+    if (sizes) {
+      const { screen, viewport } = sizes
+
+      if (screen) this.screen = screen
+      if (viewport) this.viewport = viewport
+    }
+
+    this.createBounds()
+  }
+
+  update(y) {
+    this.updateScale()
+    this.updateX()
+    this.updateY()
+  }
 }
