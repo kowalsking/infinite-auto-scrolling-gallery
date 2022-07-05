@@ -37,6 +37,22 @@ class App {
     this.planeGeometry = new Plane(this.gl)
   }
 
+  createMedias () {
+    this.mediasElements = document.querySelectorAll('.demo-1__gallery__figure')
+    this.medias = Array.from(this.mediasElements).map(element => {
+      let media = new Media({
+        element,
+        geometry: this.planeGeometry,
+        gl: this.gl,
+        scene: this.scene,
+        screen: this.screen,
+        viewport: this.viewport
+      })
+
+      return media
+    })
+  }
+
   /**
    * Wheel.
    */
@@ -67,6 +83,13 @@ class App {
       height,
       width
     }
+
+    if (this.medias) {
+      this.medias.forEach(media => media.onResize({
+        screen: this.screen,
+        viewport: this.viewport
+      }))
+    }
   }
 
   update() {
@@ -74,6 +97,10 @@ class App {
       scene: this.scene,
       camera: this.camera
     })
+
+    if (this.medias) {
+      this.medias.forEach(media => media.update())
+    }
 
     window.requestAnimationFrame(this.update.bind(this))
   }
