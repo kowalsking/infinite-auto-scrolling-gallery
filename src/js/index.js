@@ -8,8 +8,8 @@ class App {
     this.createCamera()
     this.createScene()
 
-    this.createMedias()
     this.onResize()
+    this.createMedias()
 
     this.update()
 
