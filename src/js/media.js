@@ -20,31 +20,31 @@ export default class {
     this.onResize()
   }
 
-  createMesh() {
+  createMesh () {
     const image = new Image()
     const texture = new Texture(this.gl)
-
+  
     image.src = this.image.src
     image.onload = _ => {
       texture.image = image
     }
-
+  
     const program = new Program(this.gl, {
       fragment,
       vertex,
       uniforms: {
         tMap: { value: texture },
         uScreenSizes: { value: [0, 0] },
-        uImageSize: { value: [0, 0] }
+        uImageSizes: { value: [0, 0] }
       },
       transparent: true
     })
-
+  
     this.plane = new Mesh(this.gl, {
       geometry: this.geometry,
       program
     })
-
+  
     this.plane.setParent(this.scene)
   }
 
