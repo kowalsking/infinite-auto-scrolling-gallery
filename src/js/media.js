@@ -20,32 +20,34 @@ export default class {
     this.onResize()
   }
 
-  createMesh () {
+  createMesh() {
     const image = new Image()
     const texture = new Texture(this.gl)
-  
+
     image.src = this.image.src
     image.onload = _ => {
       program.uniforms.uImageSizes.value = [image.naturalWidth, image.naturalHeight]
       texture.image = image
     }
-  
+
     const program = new Program(this.gl, {
       fragment,
       vertex,
       uniforms: {
         tMap: { value: texture },
-        uScreenSizes: { value: [0, 0] },
-        uImageSizes: { value: [0, 0] }
+        uPlaneSizes: { value: [0, 0] },
+        uImageSizes: { value: [0, 0] },
+        uViewportSizes: { value: [this.viewport.width, this.viewport.height] },
+        uStrength: { value: 0 }
       },
       transparent: true
     })
-  
+
     this.plane = new Mesh(this.gl, {
       geometry: this.geometry,
       program
     })
-  
+
     this.plane.setParent(this.scene)
   }
 
@@ -86,6 +88,6 @@ export default class {
   update(y) {
     this.updateScale()
     this.updateX()
-    this.updateY()
+    this.updateY(y)
   }
 }

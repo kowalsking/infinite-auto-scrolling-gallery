@@ -30,7 +30,7 @@ class App {
     })
 
     this.gl = this.renderer.gl
-    document.body.append(this.gl.canvas)
+    document.body.appendChild(this.gl.canvas)
   }
 
   createCamera() {
@@ -54,6 +54,7 @@ class App {
         element,
         geometry: this.planeGeometry,
         gl: this.gl,
+        height: this.galleryHeight,
         scene: this.scene,
         screen: this.screen,
         viewport: this.viewport
@@ -108,14 +109,16 @@ class App {
   }
 
   update() {
+    this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease)
+
+    if (this.medias) {
+      this.medias.forEach(media => media.update(this.scroll.current))
+    }
+
     this.renderer.render({
       scene: this.scene,
       camera: this.camera
     })
-
-    if (this.medias) {
-      this.medias.forEach(media => media.update())
-    }
 
     window.requestAnimationFrame(this.update.bind(this))
   }
