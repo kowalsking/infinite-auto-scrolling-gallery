@@ -17,6 +17,7 @@ class App {
     this.createCamera()
     this.createScene()
     this.createGeometry()
+    this.createGallery()
 
     this.onResize()
     this.createMedias()
@@ -47,6 +48,10 @@ class App {
 
   createGeometry() {
     this.planeGeometry = new Plane(this.gl)
+  }
+
+  createGallery() {
+    this.gallery = document.querySelector('.demo-1__gallery')
   }
 
   createMedias() {
@@ -102,8 +107,12 @@ class App {
       width
     }
 
+    this.galleryBounds = this.gallery.getBoundingClientRect()
+    this.galleryHeight = this.viewport.height * this.galleryBounds.height / this.screen.height
+
     if (this.medias) {
       this.medias.forEach(media => media.onResize({
+        height: this.galleryHeight,
         screen: this.screen,
         viewport: this.viewport
       }))

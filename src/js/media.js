@@ -4,12 +4,15 @@ import fragment from '../shaders/fragment.glsl'
 import vertex from '../shaders/vertex.glsl'
 
 export default class {
-  constructor({ element, geometry, gl, scene, screen, viewport }) {
+  constructor({ element, geometry, gl, height, scene, screen, viewport }) {
+    this.extra = 0
+
     this.element = element
     this.image = this.element.querySelector('img')
 
     this.geometry = geometry
     this.gl = gl
+    this.height = height
     this.scene = scene
     this.screen = screen
     this.viewport = viewport
@@ -71,13 +74,15 @@ export default class {
   }
 
   updateY(y = 0) {
-    this.plane.position.y = (this.viewport.height / 2) - (this.plane.scale.y / 2) - ((this.bounds.top - y) / this.screen.height) * this.viewport.height
+    this.plane.position.y = ((this.viewport.height / 2) - (this.plane.scale.y / 2) - ((this.bounds.top - y) / this.screen.height) * this.viewport.height) - this.extra
   }
 
   onResize(sizes) {
+    this.extra = 0
     if (sizes) {
-      const { screen, viewport } = sizes
+      const { height, screen, viewport } = sizes
 
+      if (height) this.height = height
       if (screen) this.screen = screen
       if (viewport) this.viewport = viewport
     }
@@ -85,9 +90,29 @@ export default class {
     this.createBounds()
   }
 
-  update(y) {
+  update(y, direction) {
     this.updateScale()
     this.updateX()
     this.updateY(y)
+
+    const planeOffset = this.plane.scale.y / 2
+    const viewportOffset = this.viewport.height / 2
+
+    this.isBefore = this.plane.position.y + planeOffset < -viewportOffset
+    this.isAfter = this.plane.position.y - planeOffset > viewportOffset
+
+    if (direction === 'up' && this.isBefore) {
+      this.extra -= this.height
+
+      this.isBefore = false
+      this.isAfter = false
+    }
+
+    if (direction === 'down' && this.isAfter) {
+      this.extra += this.height
+
+      this.isBefore = false
+      this.isAfter = false
+    }
   }
 }
