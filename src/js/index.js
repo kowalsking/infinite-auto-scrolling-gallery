@@ -2,9 +2,17 @@ import { Renderer, Camera, Transform, Plane } from 'ogl'
 import '../styles/index.css'
 import Media from './media.js'
 import NormalizeWheel from 'normalize-wheel'
+import { lerp } from './utils/math'
 
 class App {
   constructor() {
+    this.scroll = {
+      ease: 0.05,
+      current: 0,
+      target: 0,
+      last: 0
+    }
+
     this.createRenderer()
     this.createCamera()
     this.createScene()
@@ -16,12 +24,6 @@ class App {
     this.update()
 
     this.addEventListeners()
-
-    this.scroll = {
-      ease: 0.05,
-      current: 0,
-      target: 0
-    }
   }
 
   createRenderer() {
@@ -111,14 +113,22 @@ class App {
   update() {
     this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease)
 
+    if (this.scroll.current > this.scroll.last) {
+      this.direction = 'down'
+    } else if (this.scroll.current < this.scroll.last) {
+      this.direction = 'up'
+    }
+
     if (this.medias) {
-      this.medias.forEach(media => media.update(this.scroll.current))
+      this.medias.forEach(media => media.update(this.scroll.current, this.direction))
     }
 
     this.renderer.render({
       scene: this.scene,
       camera: this.camera
     })
+
+    this.scroll.last = this.scroll.current
 
     window.requestAnimationFrame(this.update.bind(this))
   }
