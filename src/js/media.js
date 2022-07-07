@@ -27,12 +27,6 @@ export default class {
     const image = new Image()
     const texture = new Texture(this.gl)
 
-    image.src = this.image.src
-    image.onload = _ => {
-      program.uniforms.uImageSizes.value = [image.naturalWidth, image.naturalHeight]
-      texture.image = image
-    }
-
     const program = new Program(this.gl, {
       fragment,
       vertex,
@@ -51,6 +45,11 @@ export default class {
       program
     })
 
+    image.src = this.image.src
+    image.onload = _ => {
+      program.uniforms.uImageSizes.value = [image.naturalWidth, image.naturalHeight]
+      texture.image = image
+    }
     this.plane.setParent(this.scene)
   }
 
@@ -84,7 +83,10 @@ export default class {
 
       if (height) this.height = height
       if (screen) this.screen = screen
-      if (viewport) this.viewport = viewport
+      if (viewport) {
+        this.viewport = viewport
+        this.plane.program.uniforms.uOffset.value = [this.viewport.width, this.viewport.height]
+      }
     }
 
     this.createBounds()
@@ -93,7 +95,9 @@ export default class {
   update(y, direction) {
     this.updateScale()
     this.updateX()
-    this.updateY(y)
+    this.updateY(y.current)
+
+    this.plane.program.uniforms.uStrength.value = ((y.current - y.last) / this.screen.width) * 10
 
     const planeOffset = this.plane.scale.y / 2
     const viewportOffset = this.viewport.height / 2
