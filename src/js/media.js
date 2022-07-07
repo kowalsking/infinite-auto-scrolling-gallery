@@ -5,14 +5,13 @@ import vertex from '../shaders/vertex.glsl'
 
 export default class {
   constructor({ element, geometry, gl, height, scene, screen, viewport }) {
-    this.extra = 0
-
     this.element = element
     this.image = this.element.querySelector('img')
 
+    this.extra = 0
+    this.height = height
     this.geometry = geometry
     this.gl = gl
-    this.height = height
     this.scene = scene
     this.screen = screen
     this.viewport = viewport
@@ -25,7 +24,15 @@ export default class {
 
   createMesh() {
     const image = new Image()
-    const texture = new Texture(this.gl)
+    const texture = new Texture(this.gl, {
+      generateMipmaps: false
+    })
+
+    image.src = this.image.src
+    image.onload = _ => {
+      program.uniforms.uImageSizes.value = [image.naturalWidth, image.naturalHeight]
+      texture.image = image
+    }
 
     const program = new Program(this.gl, {
       fragment,
@@ -45,11 +52,6 @@ export default class {
       program
     })
 
-    image.src = this.image.src
-    image.onload = _ => {
-      program.uniforms.uImageSizes.value = [image.naturalWidth, image.naturalHeight]
-      texture.image = image
-    }
     this.plane.setParent(this.scene)
   }
 
@@ -76,28 +78,10 @@ export default class {
     this.plane.position.y = ((this.viewport.height / 2) - (this.plane.scale.y / 2) - ((this.bounds.top - y) / this.screen.height) * this.viewport.height) - this.extra
   }
 
-  onResize(sizes) {
-    this.extra = 0
-    if (sizes) {
-      const { height, screen, viewport } = sizes
-
-      if (height) this.height = height
-      if (screen) this.screen = screen
-      if (viewport) {
-        this.viewport = viewport
-        this.plane.program.uniforms.uOffset.value = [this.viewport.width, this.viewport.height]
-      }
-    }
-
-    this.createBounds()
-  }
-
   update(y, direction) {
     this.updateScale()
     this.updateX()
     this.updateY(y.current)
-
-    this.plane.program.uniforms.uStrength.value = ((y.current - y.last) / this.screen.width) * 10
 
     const planeOffset = this.plane.scale.y / 2
     const viewportOffset = this.viewport.height / 2
@@ -118,5 +102,28 @@ export default class {
       this.isBefore = false
       this.isAfter = false
     }
+
+    this.plane.program.uniforms.uStrength.value = ((y.current - y.last) / this.screen.width) * 10
+  }
+
+  /**
+   * Events.
+   */
+  onResize(sizes) {
+    this.extra = 0
+
+    if (sizes) {
+      const { height, screen, viewport } = sizes
+
+      if (height) this.height = height
+      if (screen) this.screen = screen
+      if (viewport) {
+        this.viewport = viewport
+
+        this.plane.program.uniforms.uViewportSizes.value = [this.viewport.width, this.viewport.height]
+      }
+    }
+
+    this.createBounds()
   }
 }

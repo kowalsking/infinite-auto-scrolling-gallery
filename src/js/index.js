@@ -2,7 +2,7 @@ import { Renderer, Camera, Transform, Plane } from 'ogl'
 import '../styles/index.css'
 import Media from './media.js'
 import NormalizeWheel from 'normalize-wheel'
-import { lerp } from './utils/math'
+import { lerp } from './utils/math.js'
 
 class App {
   constructor() {
@@ -18,15 +18,20 @@ class App {
     this.createRenderer()
     this.createCamera()
     this.createScene()
-    this.createGeometry()
     this.createGallery()
 
     this.onResize()
+
+    this.createGeometry()
     this.createMedias()
 
     this.update()
 
     this.addEventListeners()
+  }
+
+  createGallery() {
+    this.gallery = document.querySelector('.demo-1__gallery')
   }
 
   createRenderer() {
@@ -35,6 +40,7 @@ class App {
     })
 
     this.gl = this.renderer.gl
+
     document.body.appendChild(this.gl.canvas)
   }
 
@@ -49,11 +55,9 @@ class App {
   }
 
   createGeometry() {
-    this.planeGeometry = new Plane(this.gl)
-  }
-
-  createGallery() {
-    this.gallery = document.querySelector('.demo-1__gallery')
+    this.planeGeometry = new Plane(this.gl, {
+      heightSegments: 10
+    })
   }
 
   createMedias() {
@@ -74,8 +78,27 @@ class App {
   }
 
   /**
-   * Wheel.
+   * Events.
    */
+  onTouchDown(event) {
+    this.isDown = true
+
+    this.scroll.position = this.scroll.current
+    this.start = event.touches ? event.touches[0].clientY : event.clientY
+  }
+
+  onTouchMove(event) {
+    if (!this.isDown) return
+
+    const y = event.touches ? event.touches[0].clientY : event.clientY
+    const distance = (this.start - y) * 2
+
+    this.scroll.target = this.scroll.position + distance
+  }
+
+  onTouchUp(event) {
+    this.isDown = false
+  }
 
   onWheel(event) {
     const normalized = NormalizeWheel(event)
@@ -87,7 +110,6 @@ class App {
   /**
    * Resize.
    */
-
   onResize() {
     this.screen = {
       height: window.innerHeight,
@@ -121,6 +143,9 @@ class App {
     }
   }
 
+  /**
+   * Update.
+   */
   update() {
     this.scroll.target += this.speed
 
@@ -128,12 +153,14 @@ class App {
 
     if (this.scroll.current > this.scroll.last) {
       this.direction = 'down'
+      this.speed = 2
     } else if (this.scroll.current < this.scroll.last) {
       this.direction = 'up'
+      this.speed = -2
     }
 
     if (this.medias) {
-      this.medias.forEach(media => media.update(this.scroll.current, this.direction))
+      this.medias.forEach(media => media.update(this.scroll, this.direction))
     }
 
     this.renderer.render({
@@ -146,28 +173,12 @@ class App {
     window.requestAnimationFrame(this.update.bind(this))
   }
 
-  onTouchDown(event) {
-    this.isDown = true
-
-    this.scroll.position = this.scroll.current
-    this.start = event.touches ? event.touches[0].clientY : event.clientY
-  }
-
-  onTouchMove(event) {
-    if (!this.isDown) return
-
-    const y = event.touches ? event.touches[0].clientY : event.clientY
-    const distance = (this.start - y) * 2
-
-    this.scroll.target = this.scroll.position + distance
-  }
-
-  onTouchUp(event) {
-    this.isDown = false
-  }
-
+  /**
+   * Listeners.
+   */
   addEventListeners() {
     window.addEventListener('resize', this.onResize.bind(this))
+
     window.addEventListener('mousewheel', this.onWheel.bind(this))
     window.addEventListener('wheel', this.onWheel.bind(this))
 
