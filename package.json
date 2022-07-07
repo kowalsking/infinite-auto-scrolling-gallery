@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/kowalsking/infinite-auto-scrolling-gallery#readme",
   "dependencies": {
+    "normalize-wheel": "^1.0.1",
     "ogl": "0.0.94"
   },
   "devDependencies": {

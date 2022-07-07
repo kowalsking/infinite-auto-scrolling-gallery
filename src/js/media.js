@@ -26,6 +26,7 @@ export default class {
   
     image.src = this.image.src
     image.onload = _ => {
+      program.uniforms.uImageSizes.value = [image.naturalWidth, image.naturalHeight]
       texture.image = image
     }
   
@@ -54,6 +55,8 @@ export default class {
     this.updateScale()
     this.updateX()
     this.updateY()
+
+    this.plane.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y]
   }
 
   updateScale() {

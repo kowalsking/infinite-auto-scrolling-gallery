@@ -1,12 +1,14 @@
 import { Renderer, Camera, Transform, Plane } from 'ogl'
 import '../styles/index.css'
 import Media from './media.js'
+import NormalizeWheel from 'normalize-wheel'
 
 class App {
   constructor() {
     this.createRenderer()
     this.createCamera()
     this.createScene()
+    this.createGeometry()
 
     this.onResize()
     this.createMedias()
@@ -14,6 +16,12 @@ class App {
     this.update()
 
     this.addEventListeners()
+
+    this.scroll = {
+      ease: 0.05,
+      current: 0,
+      target: 0
+    }
   }
 
   createRenderer() {
@@ -59,7 +67,12 @@ class App {
    * Wheel.
    */
 
-  onWheel() { }
+  onWheel(event) {
+    const normalized = NormalizeWheel(event)
+    const speed = normalized.pixelY
+
+    this.scroll.target += speed * 0.5
+  }
 
   /**
    * Resize.
@@ -70,17 +83,17 @@ class App {
       height: window.innerHeight,
       width: window.innerWidth
     }
- 
+
     this.renderer.setSize(this.screen.width, this.screen.height)
- 
+
     this.camera.perspective({
       aspect: this.gl.canvas.width / this.gl.canvas.height
     })
- 
+
     const fov = this.camera.fov * (Math.PI / 180)
     const height = 2 * Math.tan(fov / 2) * this.camera.position.z
     const width = height * this.camera.aspect
- 
+
     this.viewport = {
       height,
       width
