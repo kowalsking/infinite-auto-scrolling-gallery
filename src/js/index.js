@@ -138,7 +138,7 @@ class App {
       this.medias.forEach(media => media.onResize({
         height: this.galleryHeight,
         screen: this.screen,
-        viewport: this.viewport
+        viewport: this.viewport,
       }))
     }
   }
